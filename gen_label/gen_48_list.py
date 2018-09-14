@@ -2,13 +2,13 @@ import sys
 import os
 import numpy as np
 from numpy import random
-save_dir = "../data5/12"
-img_dir = "/lfs1/users/szhu/project/MTCNN-keras/data5/"
+save_dir = "../data4/48"
+img_dir = "/lfs1/users/szhu/project/MTCNN-keras/data4/"
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
-f1 = open(os.path.join(save_dir, 'pos_12.txt'), 'r')
-f2 = open(os.path.join(save_dir, 'neg_12.txt'), 'r')
-f3 = open(os.path.join(save_dir, 'part_12.txt'), 'r')
+f1 = open(os.path.join(save_dir, 'pos_48.txt'), 'r')
+f2 = open(os.path.join(save_dir, 'neg_48.txt'), 'r')
+f3 = open(os.path.join(save_dir, 'part_48.txt'), 'r')
 
 pos = f1.readlines()
 neg = f2.readlines()
@@ -21,24 +21,27 @@ neg_lines = []
 part_lines = []
 lines = []
 
-num = 1695000  # data4
+num = 7132  # data4
 #num = 2000
 
-for i in range(num):
+for i in range(192308):
     p = pos[i].find(" ") + 1
+    #pos[i] = img_dir + pos[i][:p-1] + ".jpg " + pos[i][p:-1] + "\n"
     pos[i] = img_dir + pos[i][:p-1] + ".jpg " + pos[i][p:-1] + "\n"
     lines.append(pos[i])
     #f.write(pos[i])
 
-for i in range(num*6):
+for i in range(137032):
     p = neg[i].find(" ") + 1
-    neg[i] = img_dir + neg[i][:p-1] + ".jpg " + neg[i][p:-1] + " -1 -1 -1 -1\n"
+    #neg[i] = img_dir + neg[i][:p-1] + ".jpg " + neg[i][p:-1] + " -1 -1 -1 -1\n"
+    neg[i] = img_dir + neg[i][:p-1]+ ".jpg " + neg[i][p:-1] + " -1 -1 -1 -1\n"
     lines.append(neg[i])
     #f.write(neg[i])
 
-for i in range(num):
+for i in range(126973):
     p = part[i].find(" ") + 1
-    part[i] = img_dir + part[i][:p-1] + ".jpg " + part[i][p:-1] + "\n" # add file attribute to the string
+    #part[i] = img_dir + part[i][:p-1] + ".jpg " + part[i][p:-1] + "\n" # add file attribute to the string
+    part[i] = img_dir + part[i][:p-1] + ".jpg " + part[i][p:-1] + "\n"
     lines.append(part[i])
     #f.write(part[i])
 '''
@@ -51,8 +54,8 @@ for i in range(num):
     lines.append(part_lines[i])
 '''
 np.random.shuffle(lines)
-train_txt='/lfs1/users/szhu/project/MTCNN-keras/data5/12/label-train.txt'
-test_txt='/lfs1/users/szhu/project/MTCNN-keras/data5/12/label-test.txt'
+train_txt='/lfs1/users/szhu/project/MTCNN-keras/data4/48/label-train.txt'
+test_txt='/lfs1/users/szhu/project/MTCNN-keras/data4/48/label-test.txt'
 test = open(test_txt,'w')
 train = open(train_txt,'w')
 for i in range(int(len(lines)*0.9)):
