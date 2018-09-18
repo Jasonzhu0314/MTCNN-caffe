@@ -29,6 +29,6 @@ def generate_annotation(wider_path,annotation_path,image_path):
     #small_data.close()
 if __name__ == '__main__':
     image_path = '/lfs1/users/szhu/data/Face_detection/WIDER_train/images/'
-    wider_path = '/lfs1/users/szhu/project/MTCNN-keras/label/small.txt'
-    small_data_path = '/lfs1/users/szhu/project/MTCNN-keras/label/small_data.txt'
+    wider_path = '/lfs1/users/szhu/project/MTCNN-keras/label/wider_face_train_bbx_gt.txt'
+    small_data_path = '/lfs1/users/szhu/project/MTCNN-keras/label/wider_gt.txt'
     generate_annotation(wider_path,small_data_path,image_path)
