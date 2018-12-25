@@ -12,11 +12,11 @@ stdsize = 12
 anno_file = "../label/wider_gt.txt"
 im_dir = "samples"
 
-image_dir = '/lfs1/users/szhu/project/MTCNN-keras/data5/'
-save_dir = "/lfs1/users/szhu/project/MTCNN-keras/data5/" + str(stdsize)
-pos_save_dir = image_dir+str(stdsize) + "/positive"
-part_save_dir = image_dir+str(stdsize) + "/part"
-neg_save_dir = image_dir+str(stdsize) + '/negative'
+image_dir = "/home/users/zhuzhengshuai/data/mtcnn/data/"
+save_dir = image_dir + str(stdsize)
+pos_save_dir = save_dir + "/positive"
+part_save_dir = save_dir + "/part"
+neg_save_dir = save_dir + '/negative'
 
 def mkr(dr):
     if not os.path.exists(dr):
@@ -33,28 +33,29 @@ f3 = open(os.path.join(save_dir, 'part_' + str(stdsize) + '.txt'), 'w')
 with open(anno_file, 'r') as f:
     annotations = f.readlines()
 num = len(annotations)
-print "%d pics in total" % num # 计算annotation中的所有的图片。
-p_idx = 0 # positive
-n_idx = 0 # negative
-d_idx = 0 # dont care
+print("%d pics in total" % num)  # 计算annotation中的所有的图片。
+p_idx = 0  # positive
+n_idx = 0  # negative
+d_idx = 0  # dont care
 idx = 0
 box_idx = 0
 
 for annotation in annotations:
     annotation = annotation.strip().split(' ')
     im_path = annotation[0]
-    bbox = map(float, annotation[1:]) 
-    boxes = np.array(bbox, dtype=np.float32).reshape(-1, 4) # 转化为（1,4）数组
+    # print(annotation)
+    bbox = list(map(float, annotation[1:]))
+    boxes = np.array(bbox).reshape(-1, 4)  # 转化为（1,4）数组
     img = cv2.imread(im_path)
     idx += 1
     if idx % 100 == 0:
-        print idx, "images done"
+        print(idx, "images done")
 
     height, width, channel = img.shape
     
     neg_num = 0
     while neg_num < 300:
-        size = npr.randint(12, min(width, height) / 2) # 计算原图片大小的二分之一，在40和图片大小二分之一之间生成随机整数
+        size = npr.randint(12, min(width, height) / 2)  # 计算原图片大小的二分之一，在40和图片大小二分之一之间生成随机整数
         nx = npr.randint(0, width - size)
         ny = npr.randint(0, height - size)
         crop_box = np.array([nx, ny, nx + size, ny + size])
@@ -67,8 +68,8 @@ for annotation in annotations:
         if Iou < 0.3:
             # Iou with all gts must below 0.3
             # Iou低于0.3的为负样本，保存下来
-            save_file = os.path.join(neg_save_dir, "%s.jpg"%n_idx)
-            f2.write(str(stdsize)+"/negative/%s"%n_idx + ' 0\n')
+            save_file = os.path.join(neg_save_dir, "%s.jpg" % n_idx)
+            f2.write(str(stdsize)+"/negative/%s" % n_idx + ' 0\n')
             cv2.imwrite(save_file, resized_im)
             n_idx += 1
             neg_num += 1
@@ -110,7 +111,7 @@ for annotation in annotations:
                 n_idx += 1
         
         # generate positive examples and part faces
-        for i in range(45):
+        for i in range(200):
             try:
                 size = npr.randint(int(min(w, h) * 0.8), np.ceil(1.25 * max(w, h)))
             # ceil向正方向取整，随机初始化（bbox最小长度的0.8倍，1.25倍的长和宽中的最大值）
@@ -133,7 +134,7 @@ for annotation in annotations:
                 offset_x2 = (x2 - nx2) / float(size)
                 offset_y2 = (y2 - ny2) / float(size)
             # 计算四个bbox的坐标偏差
-                cropped_im = img[int(ny1) : int(ny2), int(nx1) : int(nx2), :]
+                cropped_im = img[int(ny1): int(ny2), int(nx1): int(nx2), :]
                 resized_im = cv2.resize(cropped_im, (stdsize, stdsize), interpolation=cv2.INTER_LINEAR)
 
                 box_ = box.reshape(1, -1)
@@ -150,7 +151,7 @@ for annotation in annotations:
             except:
                 continue
         box_idx += 1
-        print "%s images done, pos: %s part: %s neg: %s"%(idx, p_idx, d_idx, n_idx)
+        print("%s images done, pos: %s part: %s neg: %s"%(idx, p_idx, d_idx, n_idx))
     
 f1.close()
 f2.close()
